@@ -9,9 +9,10 @@
 - [[#preamble][Preamble]]
 
 * Preamble
-1. Run the build script which:
+1. Run ~build.sh~ which:
    1. Builds PX4
    2. Builds U-Boot and ATF and downloads the board's firmware
+      1. Accept the firmware's EULA
    3. Creates a bootable image for the board
       #+begin_src bash
 	make -C $MKIMG SOC=iMX8MN flash_ddr3l_val_no_hdmi
@@ -19,3 +20,37 @@
       1. Watch out for this target, as this is ~ddr3l~-based
       2. Setup accordingly if the board does not boot properly
    4. Deploys to the SD card
+2. Insert the SD card into the board
+3. Open two terminals, one for the Uboot's console and other for the M7 core
+   #+begin_src bash
+     # Uboot
+     screen /dev/ttyUSB1 115200
+     # M7
+     screen /dev/ttyUSB0 115200
+   #+end_src
+4. Boot the board and skip Uboot autoboot
+5. In UBoot's console, run ~nuttx.bin~
+   #+begin_src bash
+     la=0x60000000; fatload mmc 1 $la nuttx.bin; bootaux $la
+   #+end_src
+6. In the M7 console, you should see the following:
+   #+begin_src bash
+     NuttShell (NSH)
+     nsh>
+   #+end_src
+7. Type ~help~ to see a list of available commands
+   #+begin_src bash
+     nsh> help
+     help usage:  help [-v] [<cmd>]
+
+       .         cat       dd        false     mkdir     pwd       source    uname     
+       [         cd        dmesg     help      mkrd      rm        test      umount    
+       ?         cp        echo      hexdump   mount     rmdir     time      unset     
+       basename  cmp       exec      kill      mv        set       true      usleep    
+       break     dirname   exit      ls        printf    sleep     truncate  xd        
+
+     Builtin Apps:
+       buttons  i2c      leds     nsh      ostest   sh       
+     nsh> 
+     NuttShell (NSH)
+   #+end_src
