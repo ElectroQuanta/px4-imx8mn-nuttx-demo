@@ -1,0 +1,21 @@
+#+TITLE: Build PX4's Nuttx for imx8mn and boot into Nuttshell
+#+AUTHOR: José Pires
+#+DATE: [2025-12-15 seg 17:02]
+#+EMAIL: a50178@alunos.uminho.pt
+
+#+LATEX_COMPILER: xelatex
+
+* TOC :noexport::TOC_3:
+- [[#preamble][Preamble]]
+
+* Preamble
+1. Run the build script which:
+   1. Builds PX4
+   2. Builds U-Boot and ATF and downloads the board's firmware
+   3. Creates a bootable image for the board
+      #+begin_src bash
+	make -C $MKIMG SOC=iMX8MN flash_ddr3l_val_no_hdmi
+      #+end_src
+      1. Watch out for this target, as this is ~ddr3l~-based
+      2. Setup accordingly if the board does not boot properly
+   4. Deploys to the SD card
